@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Alien Surveillance Network</title>
+<style>
+body{
+margin:0;
+background:black;
+color:#00ff88;
+font-family:monospace;
+overflow:auto;
+}
+
+/* LOGIN SCREEN */
+#loginScreen{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:black;
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+z-index:1000;
+}
+
+#loginBox{
+border:2px solid #00ff88;
+padding:30px;
+text-align:center;
+}
+
+input{
+background:black;
+border:1px solid #00ff88;
+color:#00ff88;
+padding:8px;
+font-family:monospace;
+margin-top:10px;
+width:220px;
+}
+
+button{
+background:black;
+border:1px solid #00ff88;
+color:#00ff88;
+padding:8px 12px;
+margin-top:10px;
+cursor:pointer;
+}
+
+header{
+border-bottom:2px solid #00ff88;
+padding:12px;
+text-align:center;
+font-size:20px;
+letter-spacing:2px;
+}
+
+.main{
+display:grid;
+grid-template-columns:240px 1fr 300px;
+min-height:600px;
+}
+
+.sidebar{
+border-right:2px solid #00ff88;
+padding:15px;
+}
+
+.file{
+border:1px solid #00ff88;
+padding:10px;
+margin-bottom:10px;
+cursor:pointer;
+}
+
+.file:hover{
+box-shadow:0 0 10px #00ff88;
+}
+
+.viewer{
+padding:20px;
+}
+
+.right{
+border-left:2px solid #00ff88;
+padding:15px;
+}
+
+/* RADAR */
+#radar{
+width:260px;
+height:260px;
+border:2px solid #00ff88;
+border-radius:50%;
+margin:auto;
+position:relative;
+overflow:hidden;
+}
+
+#sweep{
+width:260px;
+height:260px;
+background:linear-gradient(90deg,transparent,#00ff88);
+animation:spin 3s linear infinite;
+opacity:0.4;
+}
+
+.dot{
+width:6px;
+height:6px;
+background:#00ff88;
+border-radius:50%;
+position:absolute;
+}
+
+#ufo1{top:60px;left:40px;}
+#ufo2{top:150px;left:200px;}
+#ufo3{top:120px;left:120px;}
+#ufo4{top:40px;left:170px;}
+
+@keyframes spin{
+from{transform:rotate(0)}
+to{transform:rotate(360deg)}
+}
+
+/* ACTIVITY */
+.bottom{
+border-top:2px solid #00ff88;
+padding:15px;
+}
+
+#logBox{
+border:1px solid #00ff88;
+height:200px;
+overflow:auto;
+padding:10px;
+font-size:13px;
+}
+
+/* POPUPS */
+#filePopup,#popup{
+position:fixed;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+background:black;
+border:2px solid #00ff88;
+padding:20px;
+display:none;
+z-index:999;
+}
+
+#filePopup{width:520px;}
+#popup{width:400px;text-align:center;}
+
+#closeBtn{
+position:absolute;
+top:5px;
+right:10px;
+cursor:pointer;
+font-size:18px;
+}
+
+#popupContent{white-space:pre-wrap;}
+</style>
+</head>
+
+<body>
+
+<div id="loginScreen">
+<div id="loginBox">
+<h2>SECURE ALIEN DATABASE</h2>
+<p>ENTER ACCESS CODE</p>
+<input id="passInput" type="password">
+<br>
+<button onclick="checkPass()">ACCESS</button>
+</div>
+</div>
+
+<header>CLASSIFIED ALIEN SURVEILLANCE NETWORK</header>
+
+<div class="main">
+
+<div class="sidebar">
+<div class="file" onclick="openFile('martian')">Martian Species File</div>
+<div class="file" onclick="openFile('ship')">Spaceship Technology</div>
+<div class="file" onclick="openFile('brain')">Brain Scan Experiment</div>
+<div class="file" onclick="openFile('tele')">Telekinesis Study</div>
+<div class="file" onclick="openFile('cute')">Cute Alien Log</div>
+</div>
+
+<div class="viewer">
+<h3>Alien Incident Report</h3>
+<p>
+Day 42: Unknown signal detected.<br>
+Day 51: First alien sighting confirmed.<br>
+Day 53: A “cute alien” spotted in tuition.<br>
+Day 60: Emotional attachment detected.<br>
+Status: CONFUSING BUT REAL 😶
+</p>
+</div>
+
+<div class="right">
+
+<h3>Planetary Radar</h3>
+
+<div id="radar">
+<div id="sweep"></div>
+<div id="ufo1" class="dot"></div>
+<div id="ufo2" class="dot"></div>
+<div id="ufo3" class="dot"></div>
+<div id="ufo4" class="dot"></div>
+</div>
+
+<br>
+
+<h3>Alien AI</h3>
+
+<div id="aiOutput"></div>
+<input id="aiInput" placeholder="Ask the alien AI">
+
+</div>
+
+</div>
+
+<div class="bottom">
+<h3>Alien Activity Feed</h3>
+<div id="logBox"></div>
+</div>
+
+<div id="filePopup">
+<div id="closeBtn" onclick="closePopup()">X</div>
+<div id="popupContent"></div>
+</div>
+
+<div id="popup">
+<div id="popupText"></div>
+<br>
+<input id="popupPass" placeholder="ENTER PASSWORD">
+<br>
+<button onclick="denyAccess()">SUBMIT</button>
+</div>
+
+<script>
+
+/* LOGIN */
+function checkPass(){
+let pass=document.getElementById("passInput").value
+
+if(pass==="321205"){
+document.getElementById("loginScreen").style.display="none"
+}
+
+if(pass==="77"){
+openLovePage()
+}
+}
+
+/* FILES */
+function openFile(type){
+
+if(type==="cute"){
+document.getElementById("popupText").innerHTML="CUTE ALIEN FILE LOCKED<br>ENTER PASSWORD"
+document.getElementById("popup").style.display="block"
+window.currentFile="cute"
+return
+}
+
+let text=""
+
+if(type==="martian"){
+text="Martian Species:\nTelepathic beings.\nThey watch humans."
+}
+if(type==="ship"){
+text="Spaceship Tech:\nAnti-gravity.\nLight speed.\nCloaking system."
+}
+if(type==="brain"){
+text="Brain Scan:\nAliens studied human emotions.\nResult: too dramatic."
+}
+if(type==="tele"){
+text="Telekinesis:\nMind controls matter."
+}
+
+document.getElementById("filePopup").style.display="block"
+typeText(text)
+}
+
+function typeText(text){
+let i=0
+let box=document.getElementById("popupContent")
+box.innerHTML=""
+let timer=setInterval(()=>{
+box.innerHTML+=text.charAt(i)
+i++
+if(i>=text.length){clearInterval(timer)}
+},25)
+}
+
+function closePopup(){
+document.getElementById("filePopup").style.display="none"
+}
+
+/* SHUTDOWN (RESTORED) */
+function startShutdown(){
+
+let overlay=document.createElement("div")
+overlay.style.position="fixed"
+overlay.style.top="0"
+overlay.style.left="0"
+overlay.style.width="100%"
+overlay.style.height="100%"
+overlay.style.background="black"
+overlay.style.color="#00ff88"
+overlay.style.display="flex"
+overlay.style.flexDirection="column"
+overlay.style.alignItems="center"
+overlay.style.justifyContent="center"
+overlay.style.zIndex="9999"
+
+document.body.appendChild(overlay)
+
+let time=10
+
+let timer=setInterval(()=>{
+overlay.innerHTML=
+"<h2>SHUTTING DOWN IN "+time+"s</h2>"+
+"<p>u seriously think u can see it??</p>"+
+"<p>nah no way... i win</p>"
+
+time--
+
+if(time<0){
+clearInterval(timer)
+overlay.innerHTML=
+"<h2>SYSTEM SHUT DOWN</h2>"+
+"<p>u seriously think u can see it??</p>"+
+"<p>nah no way... i win</p>"
+}
+},1000)
+}
+
+/* PASSWORD */
+function denyAccess(){
+
+let input=document.getElementById("popupPass").value
+
+if(window.currentFile==="cute"){
+
+if(input==="lol"){
+
+document.getElementById("popup").style.display="none"
+
+let text="Alien Encounter Log:\nI found this cute alien in tuition and fell for it.\n\n\"Love is patient, love is kind.\" - 1 Corinthians 13:4"
+
+document.getElementById("filePopup").style.display="block"
+typeText(text)
+
+}else{
+startShutdown()
+}
+
+window.currentFile=null
+return
+}
+}
+
+/* AI */
+const aiInput=document.getElementById("aiInput")
+const aiOutput=document.getElementById("aiOutput")
+
+aiInput.addEventListener("keydown",function(e){
+if(e.key==="Enter"){
+
+let userText=this.value.trim()
+
+if(userText.toLowerCase()==="sri abirami"){
+aiOutput.innerHTML += "<p>> are you the cutest person my owner said about? damn ❤️</p>"
+this.value=""
+return
+}
+
+if(userText==="321205"){
+aiOutput.innerHTML+="<p>> ACCESS GRANTED: KEY = 77</p>"
+this.value=""
+return
+}
+
+let responses=[
+"ACCESS DENIED — NEED ALIEN KEYS 👽",
+"you are not authorized, human.",
+"signal intercepted...",
+"lol nice try 😂"
+]
+
+let r=responses[Math.floor(Math.random()*responses.length)]
+aiOutput.innerHTML+="<p>> "+r+"</p>"
+
+this.value=""
+}
+})
+
+/* LOVE PAGE */
+function openLovePage(){
+document.body.innerHTML+=`
+<div style="position:fixed;top:0;left:0;width:100%;height:100%;
+background:linear-gradient(135deg,#2c3e50,#4ca1af);
+color:white;display:flex;justify-content:center;align-items:center;z-index:99999;">
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:40px;max-width:900px;">
+<div>
+<h1>File 77</h1>
+<p>It wasn’t supposed to happen.</p>
+<p>But you became my first crush.</p>
+<p>Quiet. Real. Different.</p>
+</div>
+<div>
+<p>"Love is patient, love is kind."</p>
+<p>You changed something in me.</p>
+<h3>You were never just another person.</h3>
+</div>
+</div>
+</div>`
+}
+
+/* LOGS */
+const logs=[
+"Radar detected unknown signal",
+"Alien brain scan attempt detected",
+"Martian ship entering atmosphere"
+]
+
+setInterval(()=>{
+let msg=document.createElement("div")
+msg.innerText=logs[Math.floor(Math.random()*logs.length)]
+document.getElementById("logBox").appendChild(msg)
+},2000)
+
+</script>
+
+</body>
+</html>
