@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>LOL Game</title>
+
+<style>
+body {
+  font-family: Arial, sans-serif;
+  text-align: center;
+  background: linear-gradient(to right, #a18cd1, #fbc2eb);
+  overflow: hidden;
+}
+
+.stage { display: none; }
+.active { display: block; }
+
+button {
+  padding: 10px 20px;
+  font-size: 18px;
+  margin: 10px;
+  border: none;
+  border-radius: 10px;
+  background: #6c5ce7;
+  color: white;
+  cursor: pointer;
+}
+button:hover { background: #4834d4; }
+
+#runBtn, #heartBtn, .skipBtn {
+  position: absolute;
+}
+
+#roast {
+  position: fixed;
+  bottom: 20px;
+  width: 100%;
+  font-weight: bold;
+  color: #2d3436;
+}
+</style>
+
+</head>
+
+<body>
+
+<h1>LOL GAME</h1>
+<p id="roast"></p>
+
+<div id="stage1" class="stage active">
+  <h2>Do you like me?</h2>
+  <button onclick="nextStage(2)">Yes</button>
+  <button onclick="nextStage(2)">Obviously Yes</button>
+</div>
+
+<div id="stage2" class="stage">
+  <h2>Like or CRUSH?</h2>
+  <button onclick="nextStage(3)">Just like</button>
+  <button onclick="nextStage(3)">Crush</button>
+</div>
+
+<div id="stage3" class="stage">
+  <h2>Catch the YES if you can</h2>
+  <button id="runBtn">YES</button>
+  <button class="skipBtn" onclick="skipStage(4)">Skip</button>
+</div>
+
+<div id="stage4" class="stage">
+  <h2>Type "I like you"</h2>
+  <input id="likeInput">
+  <button onclick="checkLike()">Submit</button>
+</div>
+
+<div id="stage5" class="stage">
+  <h2>Who is more attractive?</h2>
+  <button onclick="nextStage(6)">You</button>
+  <button onclick="nextStage(6)">Me</button>
+</div>
+
+<div id="stage6" class="stage">
+  <h2>Catch this</h2>
+  <button id="heartBtn">🔥</button>
+  <button class="skipBtn" onclick="skipStage(7)">Skip</button>
+</div>
+
+<div id="stage7" class="stage">
+  <h2>What comes after crush?</h2>
+  <button onclick="wrong()">Ignore</button>
+  <button onclick="nextStage(8)">More crush</button>
+</div>
+
+<div id="stage8" class="stage">
+  <h2>Spam click</h2>
+  <button onclick="spamClick()">Click me!</button>
+  <p id="spamCount">0</p>
+</div>
+
+<div id="stage9" class="stage">
+  <h2>Pick the correct one</h2>
+  <button onclick="wrong()">💀</button>
+  <button onclick="nextStage(10)">😎</button>
+</div>
+
+<div id="stage10" class="stage">
+  <h2>Remember this: 999</h2>
+  <button onclick="nextStage(11)">OK</button>
+</div>
+
+<div id="stage11" class="stage">
+  <h2>What was it?</h2>
+  <input id="numInput">
+  <button onclick="checkNumber()">Submit</button>
+</div>
+
+<div id="stage12" class="stage">
+  <h2>Click anywhere 5 times</h2>
+</div>
+
+<div id="stage13" class="stage">
+  <h2>Be honest</h2>
+  <button onclick="wrong()">No</button>
+  <button onclick="nextStage(14)">Yes</button>
+</div>
+
+<div id="stage14" class="stage">
+  <h2>Find the invisible button</h2>
+  <button style="opacity:0;" onclick="nextStage(15)">Secret</button>
+</div>
+
+<div id="stage15" class="stage">
+  <h2>Fast click</h2>
+  <button onclick="nextStage(16)">GO!</button>
+</div>
+
+<div id="stage16" class="stage">
+  <h2>2 + 2 = ?</h2>
+  <button onclick="wrong()">5</button>
+  <button onclick="nextStage(17)">4</button>
+</div>
+
+<div id="stage17" class="stage">
+  <h2>Say something nice</h2>
+  <button onclick="nextStage(18)">You're cool</button>
+</div>
+
+<div id="stage18" class="stage">
+  <h2>Still like me?</h2>
+  <button onclick="nextStage(19)">Yes</button>
+</div>
+
+<div id="stage19" class="stage">
+  <h2>Final level</h2>
+  <button onclick="nextStage(20)">Continue...</button>
+</div>
+
+<div id="stage20" class="stage">
+  <h1>GOTCHA</h1>
+  <h2>You officially have a crush now</h2>
+</div>
+
+<script>
+function nextStage(n) {
+  document.querySelectorAll('.stage').forEach(s => s.classList.remove('active'));
+  document.getElementById('stage' + n).classList.add('active');
+  setupSkip(n);
+}
+
+// ROASTS
+const roasts = [
+  "Too slow bro 😭",
+  "Are you even trying 💀",
+  "Focus bro",
+  "Missed again 😭",
+  "This is painful to watch",
+  "You had one job",
+  "Still missing?? 😭",
+  "Bro it's right there",
+  "No way you missed that 💀",
+  "Try harder bro"
+];
+
+function randomRoast() {
+  return roasts[Math.floor(Math.random() * roasts.length)];
+}
+
+// CONSTANT ROAST
+setInterval(() => {
+  const s3 = document.getElementById("stage3").classList.contains("active");
+  const s6 = document.getElementById("stage6").classList.contains("active");
+
+  if (s3 || s6) {
+    document.getElementById("roast").innerText = randomRoast();
+  } else {
+    document.getElementById("roast").innerText = "";
+  }
+}, 1500);
+
+// MOVE FUNCTION
+function moveRandom(el) {
+  const padding = 100;
+  const maxX = window.innerWidth - padding;
+  const maxY = window.innerHeight - padding;
+
+  el.style.top = Math.random() * maxY + "px";
+  el.style.left = Math.random() * maxX + "px";
+}
+
+// RUN BUTTON
+const runBtn = document.getElementById("runBtn");
+runBtn.addEventListener("mouseover", () => moveRandom(runBtn));
+runBtn.onclick = () => nextStage(4);
+
+// HEART BUTTON
+const heart = document.getElementById("heartBtn");
+heart.addEventListener("mouseover", () => moveRandom(heart));
+heart.onclick = () => nextStage(7);
+
+// SKIP SYSTEM
+let skipTimer;
+let skipDodged = false;
+
+function setupSkip(stage) {
+  clearTimeout(skipTimer);
+  skipDodged = false;
+
+  document.querySelectorAll(".skipBtn").forEach(btn => {
+    btn.style.display = "none";
+  });
+
+  if (stage === 3 || stage === 6) {
+    const btn = document.querySelector("#stage" + stage + " .skipBtn");
+
+    skipTimer = setTimeout(() => {
+      btn.style.display = "block";
+      moveRandom(btn);
+
+      btn.addEventListener("mouseover", () => {
+        if (!skipDodged) {
+          moveRandom(btn);
+          skipDodged = true;
+        }
+      });
+    }, 30000);
+  }
+}
+
+function skipStage(n) {
+  nextStage(n);
+}
+
+// OTHER LOGIC
+function checkLike() {
+  let val = document.getElementById("likeInput").value.toLowerCase();
+  if (val.includes("like")) nextStage(5);
+  else alert("Say it properly");
+}
+
+let count = 0;
+function spamClick() {
+  count++;
+  document.getElementById("spamCount").innerText = count;
+  if (count > 10) nextStage(9);
+}
+
+function wrong() {
+  alert("Wrong, try again!");
+}
+
+function checkNumber() {
+  let val = document.getElementById("numInput").value;
+  if (val == "999") nextStage(12);
+  else alert("Nope");
+}
+
+let clicks = 0;
+document.addEventListener("click", () => {
+  if (document.getElementById("stage12").classList.contains("active")) {
+    clicks++;
+    if (clicks >= 5) nextStage(13);
+  }
+});
+</script>
+
+</body>
+</html>
